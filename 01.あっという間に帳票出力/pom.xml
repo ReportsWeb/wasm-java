@@ -1,0 +1,8 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- 01 is a single Java file. Maven only fetches the Reports.Web package (and Jackson) for javac. -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jp.pao.reports</groupId><artifactId>reports-web-java-quick-start</artifactId><version>1.0.0</version>
+  <dependencies>
+    <dependency><groupId>ac.pao</groupId><artifactId>reports-web</artifactId><version>1.0.0</version></dependency>
+  </dependencies>
+</project>
