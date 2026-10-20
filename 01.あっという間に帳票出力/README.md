@@ -14,7 +14,7 @@ JavaでPREPEJ印刷データを作り、ブラウザーのWASMプレビューと
 
 ## 1. 必要なもの
 
-- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.0.0` から自動で取得します）
+- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.1.0` から自動で取得します）
 - Docker Desktop（Windows/macOS。WindowsはLinuxコンテナーへ切り替え）またはDocker Engine + Compose plugin（Linux）
 - 初回にベースイメージを取得できるインターネット接続
 
@@ -31,7 +31,7 @@ docker compose ps
 
 `engine` と `quick-start` が `Up`（healthy）になったら [http://127.0.0.1:19210/](http://127.0.0.1:19210/) を開きます。帳票は自動で表示されます。上部の「PDFを保存」でPDFを確認できます。`QuickStartServer.java` が `/print-data` を返し、`/pdf` がWASMエンジンへPDF生成を依頼します。
 
-Windowsは `./Start.ps1`、macOS/Linuxは `sh start.sh` でも起動できます。手動Composeコマンドが基本手順です。
+Windowsは `.\Start.ps1`、macOS/Linuxは `sh start.sh` でも起動できます。手動Composeコマンドが基本手順です。
 
 ## 3. 画面で確かめる
 
@@ -67,7 +67,7 @@ Docker内Javaにブレークポイントを置くには、別途リモートデ�
 
 ## 6. 停止と削除
 
-一時停止は `docker compose stop`、再開は `docker compose start` です。コンテナーとネットワークを削除するなら `docker compose down`（または `./Stop.ps1` / `./stop.sh`）です。サンプル用イメージも含めて初期化する場合は次を実行します。
+一時停止は `docker compose stop`、再開は `docker compose start` です。コンテナーとネットワークを削除するなら `docker compose down`（または `.\Stop.ps1` / `./stop.sh`）です。サンプル用イメージも含めて初期化する場合は次を実行します。
 
 ```sh
 docker compose down --rmi local --volumes --remove-orphans
@@ -80,7 +80,7 @@ docker image ls reports-web-java-01-quick-start
 ## 7. 困ったとき
 
 - `docker` が見つからない: Dockerを導入・起動し、新しいターミナルで確認します。
-- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.0.0`` が成功するか確認します。
+- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.1.0`` が成功するか確認します。
 - ポート19210が使用中: このフォルダーに `.env` を作り `SAMPLE_PORT=19310` と書き、表示URLもその番号にします。
 - 画面が開かない: URLを先に開かず、`docker compose ps` がhealthyになるまで待ち、`docker compose logs --tail=100` を確認します。
 

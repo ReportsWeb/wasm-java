@@ -24,7 +24,7 @@ import java.util.concurrent.Semaphore;
 @Controller
 @RequestMapping("/demo/reports.web/samples/java")
 public class SampleController {
-    static final int MAX_BYTES = 32 * 1024 * 1024;
+    static final int MAX_BYTES = 64 * 1024 * 1024;
     static final Set<String> ASSETS = Set.of("kakuin.png", "estimate-header.jpg");
     private final SampleCatalog catalog;
     private final ObjectMapper json;
@@ -100,7 +100,9 @@ public class SampleController {
             String asset=null;
             if ((sample.equals("invoice")||sample.equals("estimate")) && name.equals("Image1")) asset="kakuin.png";
             if (sample.equals("estimate") && name.equals("Image2")) asset="estimate-header.jpg";
-            if (asset!=null && item instanceof ObjectNode o) { o.put("ImagePath", inlineAsset(asset)); o.put("ImageDataBase64", ""); }
+            // B18: embedded bytes go to ImageDataBase64; a data: URI in ImagePath made the
+            // Pure Java SDK refuse the whole PREPEJ and WPF throw PathTooLongException.
+            if (asset!=null && item instanceof ObjectNode o) { o.put("ImagePath", ""); o.put("ImageDataBase64", Base64.getEncoder().encodeToString(asset(asset))); }
         }
     }
 
@@ -119,9 +121,9 @@ public class SampleController {
             HttpServletRequest request) throws Exception {
         if (!renderSlots.tryAcquire()) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "PDF作成中です。少し待ってからお試しください。");
         try {
-            if (request.getContentLengthLong()>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは32MiB以内にしてください。");
+            if (request.getContentLengthLong()>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは64MiB以内にしてください。");
             byte[] body=request.getInputStream().readNBytes(MAX_BYTES+1);
-            if (body.length>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは32MiB以内にしてください。");
+            if (body.length>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは64MiB以内にしてください。");
             JsonNode data=json.readTree(body);
             if (data==null || !data.path("Pages").isArray() || data.path("Pages").isEmpty() ||
                     (data.has("Format") && !data.path("Format").asText().equals("Reports.net PrintData")))
@@ -144,15 +146,21 @@ public class SampleController {
     void inlineAssets(JsonNode node) throws IOException {
         if (node instanceof ObjectNode object) {
             Iterator<Map.Entry<String,JsonNode>> fields=object.fields();
+            String embedded=null;
             while (fields.hasNext()) {
                 var field=fields.next(); JsonNode value=field.getValue();
                 String name=value.isTextual()?registeredAssetName(value.asText()):null;
-                if (name!=null) {
+                if (name!=null && field.getKey().equals("ImagePath")) {
+                    embedded=Base64.getEncoder().encodeToString(asset(name)); // B18: ImageDataBase64, not a data: URI path
+                } else if (field.getKey().equals("ImagePath") && value.isTextual() && value.asText().matches("(?s)data:image/[^,;]*;base64,.*")) {
+                    embedded=value.asText().substring(value.asText().indexOf(",")+1);
+                } else if (name!=null) {
                     object.put(field.getKey(), "data:image/"+(name.endsWith(".jpg")?"jpeg":"png")+";base64,"+Base64.getEncoder().encodeToString(asset(name)));
                 } else if (field.getKey().equals("ImagePath") && value.isTextual() && !value.asText().isBlank() && !value.asText().startsWith("data:image/")) {
                     throw new IllegalArgumentException("外部画像は、このサンプルに登録した画像か埋め込み画像を使用してください。");
                 } else inlineAssets(value);
             }
+            if (embedded!=null) { object.put("ImagePath",""); object.put("ImageDataBase64",embedded); }
         } else if (node.isArray()) for (JsonNode child : node) inlineAssets(child);
     }
 }

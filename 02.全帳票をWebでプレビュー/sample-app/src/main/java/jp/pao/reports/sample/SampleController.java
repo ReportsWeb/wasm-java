@@ -24,7 +24,7 @@ import java.util.concurrent.Semaphore;
 @Controller
 @RequestMapping("/demo/reports.web/samples/java")
 public class SampleController {
-    static final int MAX_BYTES = 32 * 1024 * 1024;
+    static final int MAX_BYTES = 64 * 1024 * 1024;
     static final Set<String> ASSETS = Set.of("kakuin.png", "estimate-header.jpg");
     private final SampleCatalog catalog;
     private final ObjectMapper json;
@@ -119,9 +119,9 @@ public class SampleController {
             HttpServletRequest request) throws Exception {
         if (!renderSlots.tryAcquire()) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "PDF作成中です。少し待ってからお試しください。");
         try {
-            if (request.getContentLengthLong()>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは32MiB以内にしてください。");
+            if (request.getContentLengthLong()>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは64MiB以内にしてください。");
             byte[] body=request.getInputStream().readNBytes(MAX_BYTES+1);
-            if (body.length>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは32MiB以内にしてください。");
+            if (body.length>MAX_BYTES) throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "印刷データは64MiB以内にしてください。");
             JsonNode data=json.readTree(body);
             if (data==null || !data.path("Pages").isArray() || data.path("Pages").isEmpty() ||
                     (data.has("Format") && !data.path("Format").asText().equals("Reports.net PrintData")))

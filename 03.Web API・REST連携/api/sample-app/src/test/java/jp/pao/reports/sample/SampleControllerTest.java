@@ -53,6 +53,12 @@ class SampleControllerTest {
         for(String path : new String[]{"http://169.254.169.254/latest/meta-data","file:///etc/passwd","/etc/passwd"})
             assertThrows(IllegalArgumentException.class,()->controller.inlineAssets(json.readTree("{\"ImagePath\":\""+path+"\"}")));
     }
+    @Test void embeddedDataUriImagePathMovesToImageDataBase64() throws Exception {
+        var data=json.readTree("{\"Objects\":[{\"ImagePath\":\"data:image/png;base64,AQID\",\"ImageDataBase64\":\"\"}]}");
+        controller.inlineAssets(data);
+        assertEquals("",data.at("/Objects/0/ImagePath").asText());
+        assertEquals("AQID",data.at("/Objects/0/ImageDataBase64").asText());
+    }
     @Test void errorMessagesDoNotExposeInternalPaths() throws Exception {
         mvc.perform(get(API).param("action","asset").param("name","estimate-header.jpg"))
             .andExpect(status().isInternalServerError()).andExpect(jsonPath("$.error").value("処理に失敗しました。時間をおいて再度お試しください。"));
@@ -63,7 +69,9 @@ class SampleControllerTest {
         controller.setTrustedAssetBases(php+", https://www.pao.ac/demo/reports.web/samples/php/api.php?action=asset&name=");
         var imported=json.readTree("{\"Pages\":[{\"Definition\":{\"Objects\":[{\"ImagePath\":\""+php+"kakuin.png\"}]},\"Values\":[{\"Name\":\"Image1\",\"Value\":\""+php+"kakuin.png\"}]}]}");
         controller.inlineAssets(imported);
-        assertEquals("data:image/png;base64,AQID",imported.at("/Pages/0/Definition/Objects/0/ImagePath").asText());
+        // B18: the definition image is embedded in ImageDataBase64, never a data: URI path
+        assertEquals("",imported.at("/Pages/0/Definition/Objects/0/ImagePath").asText());
+        assertEquals("AQID",imported.at("/Pages/0/Definition/Objects/0/ImageDataBase64").asText());
         assertEquals("data:image/png;base64,AQID",imported.at("/Pages/0/Values/0/Value").asText());
         for(String attack:new String[]{php+"../kakuin.png",php+"kakuin.png&redirect=http://evil.test",php+"%6bakuin.png",php.replace("www.pao.ac","www.pao.ac.evil.test")+"kakuin.png"})
             assertThrows(IllegalArgumentException.class,()->controller.inlineAssets(json.readTree("{\"ImagePath\":\""+attack+"\"}")));

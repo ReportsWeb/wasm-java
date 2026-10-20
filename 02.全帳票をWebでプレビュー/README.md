@@ -6,7 +6,7 @@
 
 ## 1. 必要なもの
 
-- このリポジトリを `git clone` したフォルダー（`../common/database/` を使います。帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.0.0` から取得）
+- このリポジトリを `git clone` したフォルダー（`../common/database/` を使います。帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.1.0` から取得）
 - Docker Desktop（Windows/macOS。WindowsはLinuxコンテナー）またはDocker Engine + Compose plugin（Linux）
 - 初回のイメージ・Maven依存関係取得用インターネット接続
 
@@ -21,7 +21,7 @@ docker compose up -d --build --wait --wait-timeout 180
 docker compose ps
 ```
 
-`java`、`database`、`engine` が `Up`（healthy）なら [http://127.0.0.1:19211/](http://127.0.0.1:19211/) を開きます（帳票画面へ転送されます）。Windowsは `./Start.ps1`、macOS/Linuxは `sh start.sh` も利用できます。
+`java`、`database`、`engine` が `Up`（healthy）なら [http://127.0.0.1:19211/](http://127.0.0.1:19211/) を開きます（帳票画面へ転送されます）。Windowsは `.\Start.ps1`、macOS/Linuxは `sh start.sh` も利用できます。
 
 ## 3. 画面で確かめる
 
@@ -69,7 +69,7 @@ docker image ls reports-web-java-02-java
 
 ## 7. 困ったとき
 
-- SQLが見つからない／エンジンのイメージを取得できない: `../common/database/` があること、`docker pull `ghcr.io/reportsweb/engine:1.0.0`` が成功することを確認します。
+- SQLが見つからない／エンジンのイメージを取得できない: `../common/database/` があること、`docker pull `ghcr.io/reportsweb/engine:1.1.0`` が成功することを確認します。
 - ポート19211が使用中: `.env` に `SAMPLE_PORT=19311` と書き、そのポートで開きます。
 - ビルドに失敗する: インターネット接続とログを確認し、必要なら `docker compose build --no-cache` の後で起動します。
 - DBを初期状態へ戻す: `docker compose down --volumes` の後に起動します。
