@@ -82,7 +82,7 @@ public final class SampleCatalog {
             for(int i=0;i<chunk.size();i++) {
                 List<String> v=values(chunk.get(i));
                 p.setValue("郵便番号",at(v,0),i).setValue("市区町村",at(v,1),i).setValue("住所",at(v,2),i).drawObject("横罫線",i,null);
-                if(page>=5 && i%2==1) p.drawObject("網掛け",i,null);
+                if(page>=5 && i%2==1) p.drawObject("網掛け",i/2,null);
             }
             if(page<5) { List<String> v=values(chunk.get(0)); p.setValue("QR",(at(v,0)+" "+at(v,1)+at(v,2)).trim()); }
             p.pageEnd();
