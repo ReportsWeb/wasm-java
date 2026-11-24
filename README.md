@@ -47,7 +47,7 @@ docker compose down --volumes   # 終わったら停止・削除
 <dependency>
   <groupId>ac.pao</groupId>
   <artifactId>reports-web</artifactId>
-  <version>1.0.0</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 

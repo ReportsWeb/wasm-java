@@ -1,6 +1,6 @@
 # 01. あっという間に帳票出力（Java）
 
-> このサンプルは Maven Central のパッケージ [`ac.pao:reports-web`](https://central.sonatype.com/artifact/ac.pao/reports-web) と、帳票エンジンの Docker イメージ [`ghcr.io/reportsweb/engine`](https://github.com/ReportsWeb/engine) を使っています。
+Reports Web 1.3.0
 
 JavaでPREPEJ印刷データを作り、ブラウザーのWASMプレビューとサーバー側WASM PDFを体験する最小サンプルです。DBやSpring Bootは使いません。
 
@@ -12,9 +12,19 @@ JavaでPREPEJ印刷データを作り、ブラウザーのWASMプレビューと
 
 この操作はブラウザー内の体験用です。プログラムが設定した文字も編集できるよう、現在の値をデザインへ入れて開きます。元の帳票ファイルやプログラムは上書きしません。ページを再読み込みすると元のサンプルに戻ります。編集結果を残す場合は、戻る前にデザイナーの保存機能で `.prepdj` を保存してください。ソースの値を変える練習とは別の操作です。
 
+## Dockerを使わずに、すぐ試す
+
+Java（JDK）とNode.js（PDFの作成に使います）があれば、Dockerなしで動きます。このフォルダーで次の1行を実行すると、ブラウザーに帳票が出ます。
+
+```sh
+java QuickStartServer.java
+```
+
+ブラウザーが開かないときは http://127.0.0.1:19210/ を開きます。このあとの節は、Dockerで起動する方法です。
+
 ## 1. 必要なもの
 
-- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.1.0` から自動で取得します）
+- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.3.0` から自動で取得します）
 - Docker Desktop（Windows/macOS。WindowsはLinuxコンテナーへ切り替え）またはDocker Engine + Compose plugin（Linux）
 - 初回にベースイメージを取得できるインターネット接続
 
@@ -80,7 +90,7 @@ docker image ls reports-web-java-01-quick-start
 ## 7. 困ったとき
 
 - `docker` が見つからない: Dockerを導入・起動し、新しいターミナルで確認します。
-- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.1.0`` が成功するか確認します。
+- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.3.0`` が成功するか確認します。
 - ポート19210が使用中: このフォルダーに `.env` を作り `SAMPLE_PORT=19310` と書き、表示URLもその番号にします。
 - 画面が開かない: URLを先に開かず、`docker compose ps` がhealthyになるまで待ち、`docker compose logs --tail=100` を確認します。
 

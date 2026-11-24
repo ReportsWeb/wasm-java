@@ -140,6 +140,13 @@ public class SampleController {
         } finally { renderSlots.release(); }
     }
 
+    /** エンジン停止は502、90秒の時間切れは504。例外の文字列は応答へ出さない。 */
+    static ResponseStatusException engineFailure(IOException e) {
+        boolean timeout=e instanceof java.net.http.HttpTimeoutException && !(e instanceof java.net.http.HttpConnectTimeoutException);
+        return timeout ? new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "PDF作成エンジンが時間内に応答しませんでした。")
+            : new ResponseStatusException(HttpStatus.BAD_GATEWAY, "PDF作成エンジンに接続できませんでした。");
+    }
+
     /** Resolve our exact allowlisted endpoint. Never fetch URLs supplied inside a report. */
     void inlineAssets(JsonNode node) throws IOException {
         if (node instanceof ObjectNode object) {
@@ -149,7 +156,7 @@ public class SampleController {
                 String name=value.isTextual()?registeredAssetName(value.asText()):null;
                 if (name!=null) {
                     object.put(field.getKey(), "data:image/"+(name.endsWith(".jpg")?"jpeg":"png")+";base64,"+Base64.getEncoder().encodeToString(asset(name)));
-                } else if (field.getKey().equals("ImagePath") && value.isTextual() && !value.asText().isBlank() && !value.asText().startsWith("data:image/")) {
+                } else if (field.getKey().equals("ImagePath") && value.isTextual() && !value.asText().isBlank() && !value.asText().startsWith("data:image/") && !value.asText().matches("(?i)^https?://.*")) { // OP-IMGSRC：http・https の URL はそのままエンジンへ（読むかはエンジンの設定）
                     throw new IllegalArgumentException("外部画像は、このサンプルに登録した画像か埋め込み画像を使用してください。");
                 } else inlineAssets(value);
             }
