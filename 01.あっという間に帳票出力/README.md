@@ -1,6 +1,6 @@
 # 01. あっという間に帳票出力（Java）
 
-Reports Web 1.3.0
+Reports Web 1.3.1
 
 JavaでPREPEJ印刷データを作り、ブラウザーのWASMプレビューとサーバー側WASM PDFを体験する最小サンプルです。DBやSpring Bootは使いません。
 
@@ -20,7 +20,7 @@ Dockerを使わずに動かしたいときは、製品サイト（https://www.pa
 
 ## 1. 必要なもの
 
-- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.3.0` から自動で取得します）
+- このリポジトリを `git clone` したフォルダー（帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.3.1` から自動で取得します）
 - Docker Desktop（Windows/macOS。WindowsはLinuxコンテナーへ切り替え）またはDocker Engine + Compose plugin（Linux）
 - 初回にベースイメージを取得できるインターネット接続
 
@@ -86,7 +86,7 @@ docker image ls reports-web-java-01-quick-start
 ## 7. 困ったとき
 
 - `docker` が見つからない: Dockerを導入・起動し、新しいターミナルで確認します。
-- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.3.0`` が成功するか確認します。
+- エンジンのイメージを取得できない: インターネットに接続した状態で `docker pull `ghcr.io/reportsweb/engine:1.3.1`` が成功するか確認します。
 - ポート19210が使用中: このフォルダーに `.env` を作り `SAMPLE_PORT=19310` と書き、表示URLもその番号にします。
 - 画面が開かない: URLを先に開かず、`docker compose ps` がhealthyになるまで待ち、`docker compose logs --tail=100` を確認します。
 

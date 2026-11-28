@@ -1,12 +1,12 @@
 # 03. Web API・REST連携（Java / Spring Boot）
 
-Reports Web 1.3.0
+Reports Web 1.3.1
 
 `api/` のJava帳票APIと `client/` の利用側Webアプリを別サービスとして動かし、HTTPでPREPEJを受け取り、同じデータを送り返してPDFを取得します。8種類の帳票に対応します。画像はPREPEJへ埋め込むため、APIプロキシ越しのPDFにも残ります。
 
 ## 1. 必要なもの
 
-- このリポジトリを `git clone` したフォルダー（`../common/database/` を使います。帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.3.0` から取得）
+- このリポジトリを `git clone` したフォルダー（`../common/database/` を使います。帳票エンジンは Docker イメージ `ghcr.io/reportsweb/engine:1.3.1` から取得）
 - Docker Desktop（Windows/macOS。WindowsはLinuxコンテナー）またはDocker Engine + Compose plugin（Linux）
 - 初回のイメージ・Maven依存関係取得用インターネット接続
 
@@ -71,7 +71,7 @@ docker image ls reports-web-java-03-api
 
 ## 7. 困ったとき
 
-- SQLが見つからない／エンジンのイメージを取得できない: `../common/database/` があること、`docker pull `ghcr.io/reportsweb/engine:1.3.0`` が成功することを確認します。
+- SQLが見つからない／エンジンのイメージを取得できない: `../common/database/` があること、`docker pull `ghcr.io/reportsweb/engine:1.3.1`` が成功することを確認します。
 - ポート19212が使用中: `.env` に `SAMPLE_PORT=19312` と書き、そのURLを開きます。
 - REST応答がない: `client` と `api` の両ログ、`docker compose ps` のhealthを確認します。
 - PDFだけ失敗する: `api` と `engine` のログを確認します。受信PREPEJが先に正常表示できるか切り分けます。
